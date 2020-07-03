@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-forward-config
+  namespace: logging
+  labels:
+    log-app: fluentd-forward
+data:
+  fluent.conf: |
+    <source>
+      @type  forward
+      port  24224
+    </source>
+    <match example-app.**>
+      @type file
+      path /fluentd/log/example-app
+      append true
+      <format>
+        @type json
+      </format>
+      <buffer>
+        @type memory
+        #flush_mode immediate
+        #path /fluentd/log/buffer/example-app
+        #timekey     60m
+        #timekey_wait 1m
+      </buffer>
+    </match>
+    <match sysapp.gen.log.**>
+      @type file
+      append true
+      <format>
+        @type json
+      </format>
+      path /fluentd/log/sysapp.gen
+      <buffer>
+        @type memory
+        #flush_mode immediate
+        #path /fluentd/log/buffer/sysapp.gen
+        #timekey     60m
+        #timekey_wait 1m
+      </buffer>
+    </match>
