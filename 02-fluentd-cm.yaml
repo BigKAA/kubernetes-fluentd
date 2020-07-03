@@ -20,7 +20,7 @@ data:
       </format>
       <buffer>
         @type memory
-        #flush_mode immediate
+        flush_mode immediate
         #path /fluentd/log/buffer/example-app
         #timekey     60m
         #timekey_wait 1m
@@ -35,7 +35,7 @@ data:
       path /fluentd/log/sysapp.gen
       <buffer>
         @type memory
-        #flush_mode immediate
+        flush_mode immediate
         #path /fluentd/log/buffer/sysapp.gen
         #timekey     60m
         #timekey_wait 1m
