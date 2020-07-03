@@ -1,0 +1,2 @@
+# kubernetes-fluentd
+Файлы деплоя.
