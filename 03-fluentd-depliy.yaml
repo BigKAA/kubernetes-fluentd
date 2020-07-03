@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluentd-forward
+  namespace: logging
+  labels:
+    log-app: fluentd-forward
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fluentd-forward
+  template:
+    metadata:
+      labels:
+        app: fluentd-forward
+    spec:
+      containers:
+      - image: fluentd:v1.9-debian-1
+        imagePullPolicy: IfNotPresent
+        name: fluentd-forward
+        ports:
+        - containerPort: 24224
+          name: forward
+          protocol: TCP
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: fluentd-forward-config
+          mountPath: /fluentd/etc/
+        - name: fluentd-forward-logs
+          mountPath: /fluentd/log/
+      affinity:
+        podAntiAffinity:                                 
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: kubernetes.io/hostname
+            labelSelector:                               
+              matchLabels:                               
+                app: fluentd-forward
+      volumes:
+      - name: fluentd-forward-config
+        configMap:
+          name: fluentd-forward-config
+      - name: fluentd-forward-logs
+        persistentVolumeClaim:
+          claimName: fluentd-forward-pvc
+          readOnly: false
